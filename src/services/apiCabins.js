@@ -1,4 +1,4 @@
-import supabase from './supabase.js';
+import supabase from './supabase';
 
 export async function getCabins() {
   let { data, error } = await supabase.from('cabins').select('*');
@@ -9,4 +9,15 @@ export async function getCabins() {
   }
 
   return data;
+}
+
+export async function deleteCabin(id) {
+  const { error, status } = await supabase.from('cabins').delete().eq('id', id);
+
+  if (error || status !== 204) {
+    console.error(error);
+    throw new Error(`Unable to delete a cabin with id: ${id}`);
+  }
+
+  return true;
 }
