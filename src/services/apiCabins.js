@@ -11,19 +11,26 @@ export async function getCabins() {
   return data;
 }
 
-export async function createCabin(newCabin) {
+export async function createEditCabin(newCabin, id) {
+  console.log({ newCabin, id });
+  const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
   // create a name for the image and replace all '/' in it otherwise supabase will create folders
   const imageName = `${Date.now()}-${newCabin.image.name}`.replaceAll('/', '');
 
-  const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
+  const imagePath = hasImagePath
+    ? newCabin.image
+    : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
 
-  // /https://kyinodprqcyaolulourj.supabase.co/storage/v1/object/public/cabin-images/cabin-002.jpg
+  let query = supabase.from('cabins');
 
-  // Create a cabin
-  const { data, error } = await supabase
-    .from('cabins')
-    .insert([{ ...newCabin, image: imagePath }])
-    .select();
+  // Create a cabin if no ID is passed - it means it's editing mode
+  if (!id) {
+    query = query.insert([{ ...newCabin, image: imagePath }]);
+  } else {
+    query = query.update({ ...newCabin, image: imagePath }).eq('id', id);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error(error);
