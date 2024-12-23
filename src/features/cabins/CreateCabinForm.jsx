@@ -1,20 +1,18 @@
-import styled from 'styled-components';
+import { useForm } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 
 import Input from '../../ui/Input';
 import Form from '../../ui/Form';
 import Button from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
-import { useForm } from 'react-hook-form';
-import { createCabin } from '../../services/apiCabins';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
 import { FormRow } from '../../ui/FormRow';
+import { createCabin } from '../../services/apiCabins';
 
 function CreateCabinForm() {
   const { register, handleSubmit, getValues, formState, reset } = useForm();
   const { errors } = formState;
-  // console.log('error', errors);
   const queryClient = useQueryClient();
   const { mutate, isLoading: isCreating } = useMutation({
     mutationFn: createCabin,
@@ -31,7 +29,7 @@ function CreateCabinForm() {
   });
 
   const onSubmit = async (data) => {
-    mutate(data);
+    mutate({ ...data, image: data.image[0] });
   };
 
   const onError = (error) => {
@@ -106,8 +104,13 @@ function CreateCabinForm() {
         />
       </FormRow>
 
-      <FormRow label={'Cabin photo'}>
-        <FileInput id="image" accept="image/*" disabled={isCreating} />
+      <FormRow label={'Cabin photo'} error={errors?.image?.message}>
+        <FileInput
+          id="image"
+          accept="image/*"
+          disabled={isCreating}
+          {...register('image', { required: 'This field is required' })}
+        />
       </FormRow>
 
       <FormRow>
