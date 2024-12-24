@@ -12,7 +12,6 @@ export async function getCabins() {
 }
 
 export async function createEditCabin(newCabin, id) {
-  console.log({ newCabin, id });
   const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
   // create a name for the image and replace all '/' in it otherwise supabase will create folders
   const imageName = `${Date.now()}-${newCabin.image.name}`.replaceAll('/', '');
@@ -30,11 +29,18 @@ export async function createEditCabin(newCabin, id) {
     query = query.update({ ...newCabin, image: imagePath }).eq('id', id);
   }
 
-  const { data, error } = await query;
+  const { data, error } = await query.select().single();
+
+  console.log('query data: ', data);
 
   if (error) {
     console.error(error);
     throw new Error('Unable to create a cabin');
+  }
+
+  // do proceed with uploading if the image already has a path - it means it's already uploaded
+  if (hasImagePath) {
+    return data;
   }
 
   // Upload image
