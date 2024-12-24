@@ -1,14 +1,8 @@
 import styled from 'styled-components';
 import { HiXMark } from 'react-icons/hi2';
 import { createPortal } from 'react-dom';
-import {
-  cloneElement,
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { cloneElement, createContext, useContext, useState } from 'react';
+import { useOutsideClick } from '../hooks/useOutsideClick';
 
 const StyledModal = styled.div`
   position: fixed;
@@ -80,21 +74,7 @@ const Open = ({ children, opens: opensWindowName }) => {
 
 const Window = ({ children, name }) => {
   const { openName, closeModal } = useContext(ModalContext);
-  const ref = useRef();
-  useEffect(() => {
-    function handleClick(e) {
-      if (ref.current && !ref.current.contains(e.target)) {
-        console.log('clicked outside');
-        closeModal();
-      }
-    }
-
-    // passing 'true' here to handle the event in the capturing phase instead of the bubbling phase
-    // this way we prevent accidental closing of the modal at the moment of opening
-    document.addEventListener('click', handleClick, true);
-
-    return () => document.removeEventListener('click', handleClick, true);
-  }, [closeModal]);
+  const ref = useOutsideClick(closeModal);
 
   if (name !== openName) {
     return null;
