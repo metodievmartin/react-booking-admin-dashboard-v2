@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 
 import CreateCabinForm from './CreateCabinForm';
@@ -7,6 +6,7 @@ import { formatCurrency } from '../../utils/helpers.js';
 import { HiPencil, HiSquare2Stack, HiTrash } from 'react-icons/hi2';
 import { useCreateCabin } from './useCreateCabin';
 import Modal from '../../ui/Modal';
+import ConfirmDelete from '../../ui/ConfirmDelete';
 
 const TableRow = styled.div`
   display: grid;
@@ -71,7 +71,7 @@ const CabinRow = ({ cabin }) => {
   };
 
   return (
-    <TableRow role="row">
+    <TableRow role="row" data-cabin-id={cabinID}>
       <Img src={image} />
       <Cabin>{name}</Cabin>
       <div>Fits up to {max_capacity} guests</div>
@@ -95,15 +95,20 @@ const CabinRow = ({ cabin }) => {
           <Modal.Window name="edit-cabin">
             <CreateCabinForm cabinToEdit={cabin} />
           </Modal.Window>
-        </Modal>
 
-        <button
-          data-cabin-id={cabinID}
-          onClick={() => deleteCabin(cabinID)}
-          disabled={isDeleting}
-        >
-          <HiTrash />
-        </button>
+          <Modal.Open opens="delete-cabin">
+            <button>
+              <HiTrash />
+            </button>
+          </Modal.Open>
+          <Modal.Window name="delete-cabin">
+            <ConfirmDelete
+              resourceName="cabins"
+              disabled={isDeleting}
+              onConfirm={() => deleteCabin(cabinID)}
+            />
+          </Modal.Window>
+        </Modal>
       </div>
     </TableRow>
   );
