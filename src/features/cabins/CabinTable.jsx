@@ -1,9 +1,12 @@
+import { useSearchParams } from 'react-router-dom';
+
 import Spinner from '../../ui/Spinner.jsx';
 import Table from '../../ui/Table';
-import CabinRow from './CabinRow.jsx';
-import { useCabins } from './useCabins';
 import Menus from '../../ui/Menus';
-import { useSearchParams } from 'react-router-dom';
+import Empty from '../../ui/Empty';
+import CabinRow from './CabinRow.jsx';
+
+import { useCabins } from './useCabins';
 
 const CabinTable = () => {
   const { isLoading, cabins } = useCabins();
@@ -11,6 +14,10 @@ const CabinTable = () => {
 
   if (isLoading) {
     return <Spinner />;
+  }
+
+  if (!cabins || !cabins.length) {
+    return <Empty resourceName="cabins" />;
   }
 
   // Filtering
