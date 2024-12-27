@@ -17,16 +17,24 @@ export const useBookings = () => {
   const sortByRaw = searchParams.get('sort_by') || 'start_date-desc';
   const [field, direction] = sortByRaw.split('-');
   const sortBy = { field, direction };
+  let bookings = [];
+  let totalResults = 0;
 
-  const {
-    isLoading,
-    data: bookings,
-    error,
-  } = useQuery({
+  // Pagination
+  const currentPage = searchParams.get('page')
+    ? Number(searchParams.get('page'))
+    : 1;
+
+  const { isLoading, data, error } = useQuery({
     // adding 'filter' and 'sortBy' here will cause React Query to re-fetch the data if any of them changes
-    queryKey: ['bookings', filter, sortBy],
-    queryFn: () => getBookings({ filter, sortBy }),
+    queryKey: ['bookings', filter, sortBy, currentPage],
+    queryFn: () => getBookings({ filter, sortBy, page: currentPage }),
   });
 
-  return { isLoading, bookings, error };
+  if (data) {
+    bookings = data.bookings;
+    totalResults = data.count;
+  }
+
+  return { isLoading, bookings, totalResults, error };
 };
