@@ -85,14 +85,15 @@ const Pagination = ({ totalResults }) => {
     return null;
   }
 
+  const startResult = (currentPage - 1) * PAGE_SIZE + 1;
+  const endResult =
+    currentPage === pageCount ? totalResults : currentPage * PAGE_SIZE;
+
   return (
     <StyledPagination>
       <P>
-        Showing <span>{(currentPage - 1) * PAGE_SIZE + 1}</span> to{' '}
-        <span>
-          {currentPage === pageCount ? totalResults : currentPage * PAGE_SIZE}
-        </span>{' '}
-        of <span>{totalResults}</span> results
+        Showing <span>{startResult}</span> to <span>{endResult}</span> of{' '}
+        <span>{totalResults}</span> results
       </P>
 
       <Buttons>
