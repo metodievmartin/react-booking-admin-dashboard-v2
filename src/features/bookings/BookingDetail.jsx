@@ -13,6 +13,9 @@ import Spinner from '../../ui/Spinner';
 import { useMoveBack } from '../../hooks/useMoveBack';
 import { useBookingDetails } from './useBookingDetails';
 import { useCheckout } from '../check-in-out/useCheckout';
+import Modal from '../../ui/Modal';
+import ConfirmDelete from '../../ui/ConfirmDelete';
+import { useDeleteBooking } from './useDeleteBooking';
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -24,6 +27,7 @@ function BookingDetail() {
   const { isLoading, booking } = useBookingDetails();
   const navigate = useNavigate();
   const { checkout, isCheckingOut } = useCheckout();
+  const { deleteBooking, isDeleting } = useDeleteBooking();
   const moveBack = useMoveBack();
 
   const statusToTagName = {
@@ -56,11 +60,28 @@ function BookingDetail() {
             Check In
           </Button>
         )}
+
         {status === 'checked-in' && (
           <Button onClick={() => checkout(bookingId)} disabled={isCheckingOut}>
             Check Out
           </Button>
         )}
+
+        <Modal>
+          <Modal.Open opens="delete-booking">
+            <Button variation="danger">Delete Booking</Button>
+          </Modal.Open>
+          <Modal.Window name="delete-booking">
+            <ConfirmDelete
+              disabled={isDeleting}
+              resourceName="booking"
+              onConfirm={() =>
+                deleteBooking(bookingId, { onSettled: () => navigate(-1) })
+              }
+            />
+          </Modal.Window>
+        </Modal>
+
         <Button variation="secondary" onClick={moveBack}>
           Back
         </Button>
