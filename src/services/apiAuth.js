@@ -12,3 +12,19 @@ export const login = async ({ email, password }) => {
 
   return data;
 };
+
+export const getCurrentUser = async () => {
+  const { data } = await supabase.auth.getSession();
+
+  if (!data.session) {
+    return null;
+  }
+
+  const { data: authData, error } = await supabase.auth.getUser();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return authData?.user;
+};
