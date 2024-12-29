@@ -4,13 +4,21 @@ import Button from '../../ui/Button';
 import Form from '../../ui/Form';
 import FormRow from '../../ui/FormRow';
 import Input from '../../ui/Input';
+import { useSignup } from './useSignup';
+import SpinnerMini from '../../ui/SpinnerMini';
 
 const SignupForm = () => {
-  const { register, formState, getValues, handleSubmit } = useForm();
+  const { signup, isLoading } = useSignup();
+  const { register, formState, getValues, handleSubmit, reset } = useForm();
   const { errors } = formState;
 
-  function onSubmitHandler(data) {
-    console.log(data);
+  function onSubmitHandler({ full_name, email, password }) {
+    signup(
+      { full_name, email, password },
+      {
+        onSettled: () => reset(),
+      }
+    );
   }
 
   return (
@@ -20,6 +28,7 @@ const SignupForm = () => {
           type="text"
           id="full_name"
           {...register('full_name', { required: 'This field is required' })}
+          disabled={isLoading}
         />
       </FormRow>
 
@@ -34,6 +43,8 @@ const SignupForm = () => {
               message: 'Please provide a valid email',
             },
           })}
+          autoComplete="email"
+          disabled={isLoading}
         />
       </FormRow>
 
@@ -51,6 +62,8 @@ const SignupForm = () => {
               message: 'Password must be at least 8 characters',
             },
           })}
+          autoComplete="new-password"
+          disabled={isLoading}
         />
       </FormRow>
 
@@ -66,15 +79,20 @@ const SignupForm = () => {
             validate: (value) =>
               value === getValues()['password'] || 'Passwords do not match',
           })}
+          autoComplete="new-password"
+          disabled={isLoading}
         />
       </FormRow>
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset">
+
+        <Button variation="secondary" type="reset" disabled={isLoading}>
           Cancel
         </Button>
-        <Button>Create new user</Button>
+        <Button disabled={isLoading}>
+          {!isLoading ? 'Create new user' : <SpinnerMini />}
+        </Button>
       </FormRow>
     </Form>
   );
