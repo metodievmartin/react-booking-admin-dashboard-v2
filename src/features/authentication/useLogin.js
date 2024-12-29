@@ -9,10 +9,10 @@ export const useLogin = () => {
   const navigate = useNavigate();
   const { mutate: login, isLoading } = useMutation({
     mutationFn: ({ email, password }) => loginAPI({ email, password }),
-    onSuccess: (user) => {
-      console.log(user);
-      queryClient.setQueriesData(['user'], user);
-      navigate('/dashboard');
+    onSuccess: (data) => {
+      console.log(data?.user);
+      queryClient.setQueryData(['user'], data?.user);
+      navigate('/dashboard', { replace: true });
     },
     onError: (error) => {
       console.error('Auth : ', error);
