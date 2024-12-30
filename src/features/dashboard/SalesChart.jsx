@@ -71,9 +71,14 @@ const SalesChart = ({ bookings, numDays }) => {
     };
   });
 
+  const fromDate = format(allDates.at(0), 'MMM dd yyyy');
+  const toDate = format(allDates.at(-1), 'MMM dd yyyy');
+
   return (
     <StyledSalesChart>
-      <Heading as="h2">Sales</Heading>
+      <Heading as="h2">
+        Sales from {fromDate} &mdash; {toDate}
+      </Heading>
       <ResponsiveContainer height={400} width="100%">
         <AreaChart data={data}>
           <XAxis
@@ -81,7 +86,7 @@ const SalesChart = ({ bookings, numDays }) => {
             tick={{ fill: colors.text }}
             tickLine={{ stroke: colors.text }}
           />
-          
+
           <YAxis
             unit="$"
             tick={{ fill: colors.text }}
