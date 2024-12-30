@@ -27,7 +27,6 @@ const Guest = styled.div`
 
 const TodayItem = ({ activity }) => {
   const { id, status, guests, num_of_nights } = activity;
-  console.log(guests);
   const isArriving = status === 'unconfirmed';
   const isLeaving = status === 'checked-in';
 

@@ -105,9 +105,7 @@ function prepareData(startData, stays) {
 const DurationChart = ({ confirmedStays }) => {
   const { isDarkMode } = useDarkMode();
   const startData = getStartData(isDarkMode);
-  console.log(startData);
   const data = prepareData(startData, confirmedStays);
-  console.log(data);
 
   return (
     <ChartBox>

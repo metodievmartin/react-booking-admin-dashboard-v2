@@ -45,8 +45,6 @@ export async function getCurrentUser() {
     throw new Error(error.message);
   }
 
-  console.log(authData);
-
   return authData?.user;
 }
 
